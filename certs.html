@@ -6,9 +6,156 @@
     <meta name="description" content="Jack Sutera - Certifications">
     <title>Certifications | Jack Sutera</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .cert-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 3px solid var(--accent);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .cert-card:hover {
+            border-color: var(--card-border-hover);
+            box-shadow: 0 0 24px rgba(40, 201, 113, 0.15);
+        }
+
+        .cert-card.planned {
+            border-left-color: #444;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge.in-progress {
+            background: #f4a261;
+            color: #1a1a1a;
+        }
+
+        .status-badge.planned {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        .cert-link {
+            display: inline-block;
+            color: var(--accent);
+            font-size: 13px;
+            text-decoration: none;
+            margin-top: 12px;
+            transition: color 0.2s;
+        }
+
+        .cert-link:hover {
+            color: var(--text);
+        }
+    </style>
 </head>
 <body>
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="index.html" style="font-weight: 700; color: var(--accent);">JS</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" style="margin-right: 20px;">PROJECTS</a>
+            <a href="certs.html" style="margin-right: 20px;">CERTS</a>
+            <a href="./assets/resume.pdf" download>RESUME</a>
+        </div>
+    </nav>
+
+    <div class="page-content has-nav">
+        <a href="index.html" class="back-link">← home</a>
+        
+        <h1 style="font-family: 'Space Mono', monospace; font-size: 2rem; color: var(--accent); margin-bottom: 8px;">Certifications</h1>
+        <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 40px;">working toward security expertise</p>
+
+        <div id="certs-container"></div>
+
+        <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--card-border);">
+            <h2 style="font-family: 'Space Mono', monospace; font-size: 1.5rem; color: var(--accent); margin-bottom: 16px;">why security?</h2>
+            <p style="color: var(--text); font-size: 15px; line-height: 1.7; max-width: 680px;">
+                Binghamton CS runs a 4+1 Cybersecurity master's track. Completing the Google cert and Security+ gives me the applied credentials to complement the academic side while I evaluate the grad school path.
+            </p>
+        </div>
+    </div>
+
     <script src="content.js"></script>
     <script src="main.js"></script>
+    <script>
+        (function() {
+            const data = window.PORTFOLIO_DATA;
+            if (!data || !data.certifications) return;
+
+            const container = document.getElementById('certs-container');
+
+            data.certifications.forEach(cert => {
+                const card = document.createElement('div');
+                card.className = `cert-card ${cert.status === 'planned' ? 'planned' : ''}`;
+
+                const title = document.createElement('h3');
+                title.style.fontFamily = "'Space Mono', monospace";
+                title.style.fontSize = '16px';
+                title.style.marginBottom = '8px';
+                title.style.color = 'var(--text)';
+                title.textContent = cert.title;
+
+                const issuer = document.createElement('p');
+                issuer.style.fontSize = '13px';
+                issuer.style.color = 'var(--text-muted)';
+                issuer.style.marginBottom = '12px';
+                issuer.textContent = cert.issuer;
+
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `status-badge ${cert.status}`;
+                statusBadge.textContent = cert.status === 'in-progress' ? 'IN PROGRESS' : 'PLANNED';
+
+                const eta = document.createElement('p');
+                eta.style.fontSize = '12px';
+                eta.style.color = 'var(--text-muted)';
+                eta.style.marginTop = '12px';
+                eta.textContent = `Expected ${cert.eta}`;
+
+                const link = document.createElement('a');
+                link.href = cert.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'cert-link';
+                link.textContent = 'learn more →';
+
+                card.appendChild(title);
+                card.appendChild(issuer);
+                card.appendChild(statusBadge);
+                card.appendChild(eta);
+                card.appendChild(link);
+
+                container.appendChild(card);
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -95,19 +95,22 @@ function initBackgroundAnimation() {
 
 function initDragSystem() {
     const artifacts = document.querySelectorAll('.artifact');
+    if (artifacts.length === 0) return;
+
     let zCounter = 1;
     let dragState = null;
     const minVisiblePx = 20;
+    const mouseDownPositions = new WeakMap();
 
     artifacts.forEach(artifact => {
+        artifact.style.position = 'absolute';
+        
         const rect = artifact.getBoundingClientRect();
         artifact.style.left = rect.left + 'px';
         artifact.style.top = rect.top + 'px';
     });
 
     artifacts.forEach(artifact => {
-        let mouseDownPos = null;
-
         artifact.addEventListener('mousedown', function(e) {
             if (e.target.closest('.btn-primary, .btn-ghost')) {
                 return;
@@ -127,7 +130,7 @@ function initDragSystem() {
                 startY: e.clientY
             };
 
-            mouseDownPos = { x: e.clientX, y: e.clientY };
+            mouseDownPositions.set(artifact, { x: e.clientX, y: e.clientY });
 
             artifact.style.zIndex = ++zCounter;
             artifact.classList.add('dragging');
@@ -157,7 +160,7 @@ function initDragSystem() {
                 startY: touch.clientY
             };
 
-            mouseDownPos = { x: touch.clientX, y: touch.clientY };
+            mouseDownPositions.set(artifact, { x: touch.clientX, y: touch.clientY });
 
             artifact.style.zIndex = ++zCounter;
             artifact.classList.add('dragging');
@@ -169,6 +172,7 @@ function initDragSystem() {
 
         if (artifact.tagName === 'A') {
             artifact.addEventListener('click', function(e) {
+                const mouseDownPos = mouseDownPositions.get(artifact);
                 if (mouseDownPos) {
                     const currentPos = { x: e.clientX, y: e.clientY };
                     const distance = Math.sqrt(
@@ -177,6 +181,7 @@ function initDragSystem() {
                     );
                     if (distance > 5) {
                         e.preventDefault();
+                        e.stopPropagation();
                     }
                 }
             });
